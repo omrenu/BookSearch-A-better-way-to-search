@@ -1,49 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>BookHub— a simplified way to search Books!</title>
+    <!--Google Font -->
+    <link href='src/css/font.css' rel='stylesheet' type='text/css'>
 
-    <!--Import Google Icon Font-->
-    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!--Import materialize.css-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <!-- Foundation -->
+    <link href="src/css/foundation.min.css" rel="stylesheet" type="text/css">
 
-    <!--ResposniveNess-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-
-    <link rel="stylesheet" href="style.css">
+    <!--Custom css -->
+    <link href="src/css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-    <nav>
-        <div class="nav-wrapper">
-            <a href="#"><img id="brand-logo" src="./bookHubLogo.png"></a>
-            <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-            <ul class="right hide-on-med-and-down">
-                <li>TotalBooks:<span class="totalBooks"></span></li>
-            </ul>
-            <ul class="side-nav" id="mobile-demo">
-                <li>TotalBooks:<span class="totalBooks"></span></li>
-            </ul>
-        </div>
-    </nav>
-    <form role="form">
-        <div class="form-group">
-            <input type="search" class="form-control input-lg" id="search" placeholder="Sart type 'a' ....">
-        </div>
-    </form>
-    <section id="books">
+<div class="main">
+    <header>
+        <div class="row">
+            <div class="header-content">
+                <a href="" class="logo float-left"><img src="src/images/bookHubLogo.png" srcset="" alt="BookHub"></a>
+                <a href="" class=" bubble-pop notification float-right">Books<span class="book-count"></span></a>
 
+            </div>
+        </div>
+    </header>
+    <div class="row contain-to-grid clearfix controls hidden">
+        <div class="search-box float-left">
+            <input type="text" id="search-input" placeholder="Search by name,author,price.">
+        </div>
+        <div class="dropdown menu  right float-right">
+            <a href="#" class="button">sort by <i class="fa fa-caret-down"></i></a>
+            <ul>
+                <li class="button"><button class="sort" data-sort="name:asc">Name</button></li>
+                <li class="button"><button class="sort" data-sort="price:asc">Price</button></li>
+                <li class="button"><button class="sort" data-sort="author:asc">Author</button></li>
+            </ul>
 
-    </section>
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
-    <script src="script.js"></script>
+        </div>
+    </div>
+   <section>
+       <div class="page-loader">
+           <p>Fetching parcel items please wait...</p>
+           <div class="loader">
+               <span></span>
+               <span></span>
+               <span></span>
+               <span></span>
+           </div>
+       </div>
+       <div class="row" id="book-item-container"></div>
+
+       <div class="no-results" style="display:none;">
+           <p><i class="fa fa-2x fa-info-circle"></i> sorry no such results.</p>
+       </div>
+       <div class="error-page hidden">
+           <p>Something went wrong try to refresh the page...</p>
+           <p class="error-pic"><i class="fa fa-5x fa-bug"></i></p>
+       </div>
+   </section>
+    <div class="fake-modal hidden" id="book-window">
+        <div class="fake-modal-wrapper">
+            <a href="#" class="button close-window float-right">X</a>
+        </div>
+    </div>
+</div>
+<!--jQuery-->
+<script src="src/js/jquery.min.js"></script>
+<!--Foundation-->
+<script src="src/js/foundation.min.js"></script>
+<!--Handlebars-->
+<script src="src/js/handlebars.min.js"></script>
+<script id="book-template" type="text/x-handlebars-template">
+    {{#books}}
+    <div class="small-12 medium-4 large-3 columns mix book-item" data-uid="{{name}}" data-name="{{name}}" data-rating="{{rating}}" data-price="{{price}}" data-author="{{author}}">
+        <div class="book-content">
+            <div data-image ="{{image}}" class="book-image"><img src="{{image}}"/></div>
+            <h2 data-name="{{name}}">{{name}}</h2>
+            <div class="book-info clearfix">
+                <p  data-rating="{{rating}}" class="float-left"></p>
+                <p data-price="{{price}}" class="float-right price-box">{{price}}</p>
+                <p data-describe = "{{description}}"></p>
+                <p data-author = "{{author}}"></p>
+            </div>
+            <a href="#" class="detail-button" data-open='book-window'><i class="fa fa-ellipsis-h"></i> Detail</a>
+        </div>
+    </div>
+    {{/books}}
+</script>
+<script id="modal-template" type="text/x-handlebars-template">
+    <div class="product-info" data-uid="{{name}}">
+        <div class="row">
+            <div class="small-12 medium-6 large-6 columns">
+                <h2>{{name}}</h2>
+                <div class="window-img"><img src="{{image}}" alt="product-image"/></div>
+            </div>
+            <div class="small-12 medium-6 large-6 columns">
+                <div>
+                    <a class="bubble-pop green button like-button">Like <span class="like-count"></span></a>
+                    <a href="#" class="button">Share</a>
+                </div>
+                <div class="map">
+                    <div class="map-loader">
+                        <div class="loader-content">
+                            <p class="info-bar"><span>Name</span> {{name}}</p>
+                        </div>
+                        <div class="loader-content">
+                            <p class="info-bar"><span>price</span> {{price}}</p>
+                        </div>
+                        <div class="loader-content">
+                            <p class="info-bar"><span>Author</span> {{author}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script src="http://cdn.jsdelivr.net/jquery.mixitup/latest/jquery.mixitup.min.js"></script>
+<!--Custome script -->
+<script src="src/js/script.js"></script>
+<script>
+    $(document).foundation();
+</script>
 </body>
 </html>
